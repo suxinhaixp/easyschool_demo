@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="https://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<head>
+    <link rel="icon" href="picture.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="spectre.min.css"></link>
+    <link rel="stylesheet" href="spectre-exp.min.css"></link>
+    <link rel="stylesheet" href="spectre-icons.min.css"></link>
+    <meta charset="UTF-8"  />
+    <title>录入成绩</title>
+</head>
+<body>
+<form id="form1" accept-charset="utf-8">
+<div>
+    <label class="form-label" for="id1">学号:</label>
+    <input type="text" id="id1" name="id1" class="form-input"/>
+</div>
+<div>
+    <label class="form-label" for="term">学期:</label>
+    <input type="text" id="term" name="term" class="form-input"/>
+</div>
+<div>
+    <label class="form-label" for="classcode">课程编号:</label>
+    <input type="text" id="classcode" name="classcode"  class="form-input"/>
+</div>
+
+<div>
+    <label class="form-label" for="classname">课程名称:</label>
+    <input type="text" id="classname" name="classname"  class="form-input"/>
+</div>
+
+<div>
+    <label class="label-tips" for="decq">学分:</label>
+    <input type="text" id="decq" name="decq"  class="form-input"/>
+</div>
+
+
+
+<div>
+    <label class="form-label" for="daily_score">平时分:</label>
+    <input type="text" id="daily_score" name="daily_score"  class="form-input"/>
+</div>
+
+<div>
+    <label class="form-label" for="last_score">期末考试:</label>
+    <input type="text" id="last_score" name="last_score"  class="form-input"/>
+</div>
+
+<div>
+    <label class="form-label" for="all_score">总评:</label>
+    <input type="text" id="all_score" name="all_score"  class="form-input"/>
+</div>
+
+<button class="btn btn-success" type="button" id="lr" onclick="luru()">录入</button>
+<button class="btn btn-error" type="reset" value="Reset">重置</button>
+</form>
+</body>
+</html>
+<script>
+        function cleartext() {
+            document.getElementById("id1").value = "";
+            document.getElementById("classcode").value = "";
+            document.getElementById("classname").value = "";
+            document.getElementById("daily_score").value = "";
+            document.getElementById("last_score").value = "";
+            document.getElementById("all_score").value = "";
+            document.getElementById("term").value = "";
+            document.getElementById("decq").value = "";
+        }
+    function luru() {
+        var name = localStorage.getItem("key");
+        var idno = $("#id1").val();
+        var classcode=$("#classcode").val();
+        var classname=$("#classname").val();
+        var daily_score=$("#daily_score").val();
+        var last_score=$("#last_score").val();
+        var all_score=$("#all_score").val();
+        var term=$("#term").val();
+        var decq=$("#decq").val();
+        if(!idno||!classcode||!classname||!daily_score||!last_score||!all_score||!term||!decq){
+            alert("输入不完整！");
+        }
+        else if(isNaN(idno)||isNaN(term)){
+            alert("输入错误！");
+        }
+        else {
+            var formData = {
+                idno: idno,
+                classcode:classcode,
+                classname:classname,
+                daily_score:daily_score,
+                last_score:last_score,
+                all_score:all_score,
+                term:term,
+                decq:decq
+            };
+            $.ajax({
+                url: "/addScore",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(formData),
+                dataType: 'json',
+                success: function (reuslt) {
+                    console.log(reuslt);
+
+                    if(reuslt.status=="Already") {
+                        alert("该学生已有这门课成绩！");
+                        cleartext();
+                    }
+                    if(reuslt.status=="Exist") {
+                        alert("录入成功！");
+                        cleartext();
+                    }
+                    else if(reuslt.status=="none")
+                    {
+                        alert("录入失败！");
+                        cleartext();
+                    }
+                }
+            });
+        }
+    }
+
+</script>

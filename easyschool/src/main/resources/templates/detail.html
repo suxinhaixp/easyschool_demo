@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="https://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="spectre.min.css"></link>
+<link rel="stylesheet" href="spectre-exp.min.css"></link>
+<link rel="stylesheet" href="spectre-icons.min.css"></link>
+<head>
+    <link rel="icon" href="picture.ico" type="image/x-icon"/>
+    <meta charset="UTF-8" />
+    <title>学籍信息</title>
+</head>
+<body>
+<table width="600" border="1" cellspacing="0" class="table table-striped table-hover">
+    <thead>
+
+    </thead>
+    <tbody id="tbMain"></tbody>
+</table>
+
+
+</body>
+</html>
+<script>
+
+    $(document).ready(function () {
+        var name= localStorage.getItem("key");
+        var formData = {
+            id: name
+        };
+
+        $.ajax({
+            url: "/form",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(formData),
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+
+                var tbody = document.getElementById('tbMain');
+                var row1 = document.createElement('tr'); //创建行
+
+                var id11 = document.createElement('td'); //创建第一列id
+                id11.innerHTML = "学号"; //填充数据
+                row1.appendChild(id11); //加入行 ，下面类似
+                var id12 = document.createElement('td');//创建第二列name
+                id12.innerHTML = data.data.id;
+                row1.appendChild(id12);
+
+                var id13 = document.createElement('td'); //创建第一列id
+                id13.innerHTML = "姓名"; //填充数据
+                row1.appendChild(id13); //加入行 ，下面类似
+                var id14 = document.createElement('td');//创建第二列name
+                id14.innerHTML = data.data.username;
+                row1.appendChild(id14);
+
+
+                tbody.appendChild(row1);
+
+
+
+
+                var row2 = document.createElement('tr'); //创建行
+
+                var id21 = document.createElement('td'); //创建第一列id
+                id21.innerHTML = "性别"; //填充数据
+                row2.appendChild(id21); //加入行 ，下面类似
+                var id22 = document.createElement('td');//创建第二列name
+                id22.innerHTML = data.data.sex;
+                row2.appendChild(id22);
+
+                var id23 = document.createElement('td'); //创建第一列id
+                id23.innerHTML = "班级"; //填充数据
+                row2.appendChild(id23); //加入行 ，下面类似
+                var id24 = document.createElement('td');//创建第二列name
+                id24.innerHTML = data.data.classno;
+                row2.appendChild(id24);
+
+
+                tbody.appendChild(row2);
+
+
+
+
+                var row3 = document.createElement('tr'); //创建行
+
+                var id31 = document.createElement('td'); //创建第一列id
+                id31.innerHTML = "学院"; //填充数据
+                row3.appendChild(id31); //加入行 ，下面类似
+                var id32 = document.createElement('td');//创建第二列name
+                id32.innerHTML = data.data.college;
+                row3.appendChild(id32);
+
+                var id33 = document.createElement('td'); //创建第一列id
+                id33.innerHTML = "入学日期"; //填充数据
+                row3.appendChild(id33); //加入行 ，下面类似
+                var id34 = document.createElement('td');//创建第二列name
+                id34.innerHTML = data.data.date;
+                row3.appendChild(id34);
+
+
+                tbody.appendChild(row3);
+
+
+
+                var row4 = document.createElement('tr'); //创建行
+                var id41 = document.createElement('td'); //创建第一列id
+                id41.innerHTML = "专业"; //填充数据
+                row4.appendChild(id41); //加入行 ，下面类似
+                var id42 = document.createElement('td');//创建第二列name
+                id42.innerHTML = data.data.major;
+                row4.appendChild(id42);
+                var id43 = document.createElement('td'); //创建第一列id
+                id43.innerHTML = "民族"; //填充数据
+                row4.appendChild(id43); //加入行 ，下面类似
+                var id44 = document.createElement('td');//创建第二列name
+                id44.innerHTML = data.data.nationality;
+                row4.appendChild(id44);
+                tbody.appendChild(row4);
+
+
+
+                var row5 = document.createElement('tr'); //创建行
+                var id51 = document.createElement('td'); //创建第一列id
+                id51.innerHTML = "入学批次"; //填充数据
+                row5.appendChild(id51); //加入行 ，下面类似
+                var id52 = document.createElement('td');//创建第二列name
+                id52.innerHTML = data.data.year_in;
+                row5.appendChild(id52);
+                var id53 = document.createElement('td'); //创建第一列id
+                id53.innerHTML = "状态"; //填充数据
+                row5.appendChild(id53); //加入行 ，下面类似
+                var id54 = document.createElement('td');//创建第二列name
+                id54.innerHTML = data.data.status;
+                row5.appendChild(id54);
+                tbody.appendChild(row5);
+
+
+
+                var row6 = document.createElement('tr'); //创建行
+                var id61 = document.createElement('td'); //创建第一列id
+                id61.innerHTML = "学制"; //填充数据
+                row6.appendChild(id61); //加入行 ，下面类似
+                var id62 = document.createElement('td');//创建第二列name
+                id62.innerHTML = data.data.year_all;
+                row6.appendChild(id62);
+                var id63 = document.createElement('td'); //创建第一列id
+                id63.innerHTML = "初生年月"; //填充数据
+                row6.appendChild(id63); //加入行 ，下面类似
+                var id64 = document.createElement('td');//创建第二列name
+                id64.innerHTML = data.data.birthday;
+                row6.appendChild(id64);
+                tbody.appendChild(row6);
+
+                var row7 = document.createElement('tr'); //创建行
+                var id71 = document.createElement('td'); //创建第一列id
+                id71.innerHTML = "备注"; //填充数据
+                row7.appendChild(id71); //加入行 ，下面类似
+                var id72 = document.createElement('td');//创建第二列name
+                id72.innerHTML = data.data.remarks;
+                row7.appendChild(id72);
+                var id73 = document.createElement('td'); //创建第一列id
+                id73.innerHTML = "生源地"; //填充数据
+                row7.appendChild(id73); //加入行 ，下面类似
+                var id74 = document.createElement('td');//创建第二列name
+                id74.innerHTML = data.data.of_Student;
+                row7.appendChild(id74);
+                tbody.appendChild(row7);
+
+
+            }
+        });
+    });
+
+    </script>

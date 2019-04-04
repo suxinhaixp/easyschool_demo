@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="https://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<head>
+    <link rel="icon" href="picture.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="spectre.min.css"></link>
+    <link rel="stylesheet" href="spectre-exp.min.css"></link>
+    <link rel="stylesheet" href="spectre-icons.min.css"></link>
+    <meta charset="UTF-8"/>
+    <title>成绩查询</title>
+</head>
+<body>
+<div>
+    <label class="form-label" for="u">学号:</label>
+    <input class="form-input" type="text" id="u" placeholder="学号"/>
+</div>
+<div>
+    <label class="form-label" for="term">学期:</label>
+    <input class="form-input" type="text" id="term"/>
+    <button class="btn btn-success" type="button" id="button_search" onclick="search()">查询</button>
+</div>
+<table width="600" border="1" cellspacing="0" id="tTable" class="table table-striped table-hover">
+    <thead>
+    <tr>
+        <td>课程代码</td>
+        <td>课程名称</td>
+        <td>学分</td>
+        <td>平时成绩</td>
+        <td>期中成绩</td>
+        <td>期末成绩</td>
+        <td>期末总评</td>
+    </tr>
+    </thead>
+    <tbody id="tbMain">
+    </tbody>
+    <tbody id="tbBody">
+    </tbody>
+</table>
+
+<div>
+    <label class="form-label" for="ui">学号:</label>
+    <input class="form-input" type="text" id="ui" placeholder="学号"/>
+    <div class="form-group">
+        <select id="selectbt" class="form-select">
+            <option>Choose an option</option>
+            <option>平时成绩</option>
+            <option>期末考试</option>
+            <option>期末总评</option>
+        </select>
+    </div>
+    <label class="form-label" for="classcode">课程序号:</label>
+    <input class="form-input" type="text" id="classcode"/>
+    <label class="form-label" for="score">成绩:</label>
+    <input class="form-input" type="text" id="score"/>
+    <button id="modify" class="btn btn-primary" onclick="modifybt()"><i class="icon icon-arrow-left"></i>修改</button>
+</div>
+</body>
+</html>
+<script>
+    function cleartext() {
+        document.getElementById("ui").value = "";
+        document.getElementById("classcode").value = "";
+        document.getElementById("score").value = "";
+        document.getElementById("selectbt").value = "Choose an option";
+
+    }
+    function modifybt() {
+        var id;
+        var score = $("#score").val();
+        console.log($("#selectbt ").val());
+        var classcode = $("#classcode").val();
+        console.log(classcode);
+        var classscore = $("#selectbt ").val();
+        if (classscore == "Choose an option") {
+            alert("请选择录入项");
+        } else {
+            if (classscore == "平时成绩") {
+                id = 1;
+            }
+            if (classscore == "期末考试") {
+                id = 2;
+            }
+            if (classscore == "期末总评") {
+                id = 3;
+            }
+            var idno = $("#ui").val();
+            if (isNaN(idno)) {
+                alert("学号错误！")
+            }
+            else if(!isNaN(score))
+            {
+                var formData = {
+                    idno: idno,
+                    id: id,
+                    middle_score: score,
+                    classcode: classcode
+                };
+                $.ajax({
+                    url: "/modifyform",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(formData),
+                    dataType: 'json',
+                    success: function (result) {
+                        console.log(result.status);
+                        if (result.status == "success") {
+                            alert("修改成功!");
+                            cleartext();
+                        }
+                        if (result.status == "failed") {
+                            alert("修改失败!");
+                        }
+                        if (result.status == "error") {
+                            alert("数据有误!");
+                        }
+                    }
+                });
+            }
+            else {
+                alert("成绩输入错误！");
+            }
+            }
+
+    }
+
+    function search() {
+        if (document.getElementById("tbBody") != null)
+            document.getElementById("tbBody").remove();
+        var name = localStorage.getItem("key");
+        var idno = $("#u").val()
+        var term = $("#term").val()
+        var formData = {
+            id: idno,
+            year_all: term
+        };
+        if (!idno || !term) {
+            alert("输入错误！");
+        }
+        $.ajax({
+            url: "/tScoreList",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(formData),
+            dataType: 'json',
+            success: function (reuslt) {
+                console.log(reuslt);
+                if (reuslt.status == "none") {
+                    alert("该学生不存在");
+                    document.getElementById("u").value = "";
+                }
+                else if (reuslt.status == "Exist") {
+                    var tbody = document.createElement('tbody');
+                    tbody.id = "tbBody"
+                    for (i in reuslt.data) {
+                        var row1 = document.createElement('tr'); //创建行
+                        var id11 = document.createElement('td'); //创建第一列id
+                        id11.innerHTML = reuslt.data[i].classcode; //填充数据
+                        row1.appendChild(id11); //加入行 ，下面类似
+                        var id12 = document.createElement('td'); //创建第一列id
+                        id12.innerHTML = reuslt.data[i].classname; //填充数据
+                        row1.appendChild(id12); //加入行 ，下面类似
+                        var id13 = document.createElement('td'); //创建第一列id
+                        id13.innerHTML = reuslt.data[i].decq; //填充数据
+                        row1.appendChild(id13); //加入行 ，下面类似
+                        var id14 = document.createElement('td'); //创建第一列id
+                        id14.innerHTML = reuslt.data[i].daily_score; //填充数据
+                        row1.appendChild(id14); //加入行 ，下面类似
+                        var id15 = document.createElement('td'); //创建第一列id
+                        id15.innerHTML = ""; //填充数据
+                        row1.appendChild(id15); //加入行 ，下面类似
+                        var id16 = document.createElement('td'); //创建第一列id
+                        id16.innerHTML = reuslt.data[i].last_score; //填充数据
+                        row1.appendChild(id16); //加入行 ，下面类似
+                        var id17 = document.createElement('td'); //创建第一列id
+                        id17.innerHTML = reuslt.data[i].all_score; //填充数据
+                        row1.appendChild(id17); //加入行 ，下面类似
+                        tbody.appendChild(row1);
+                        var table = document.getElementById("tTable")
+                        table.appendChild(tbody);
+                    }
+                }
+                ;
+            }
+        });
+    }
+</script>

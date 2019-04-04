@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="https://cdn.bootcss.com/jquery/1.10.2/jquery.min.js">
+</script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<link rel="stylesheet" href="spectre.min.css"></link>
+<link rel="stylesheet" href="spectre-exp.min.css"></link>
+<link rel="stylesheet" href="spectre-icons.min.css"></link>
+<head>
+    <link rel="icon" href="picture.ico" type="image/x-icon"/>
+    <meta charset="UTF-8"/>
+    <title>student</title>
+</head>
+<body>
+<div id="welcome">
+    <span class="label" style="position: absolute;left: 5%;top: 5%;"><H4> {{ message }}</H4></span>
+</div>
+<div>
+    <button id="bt1" class="btn btn-lg" onclick="clearcook()" style="position: absolute;right: 5%;top: 5%;">退出</button>
+</div>
+<script>
+    var app = new Vue({
+        el: '#welcome',
+        data: {
+            message: ''
+        }
+    })
+    var key = localStorage.getItem("key");
+    var formData = {
+        id: key
+    };
+    $.ajax({
+        url: "/findId",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(formData),
+        dataType: 'json',
+        success: function (data) {
+            console.log(data);
+            if (data.status == "Done") {
+                alert("帐号密码错误！");
+                top.location="/login";
+            }
+            else {
+                    app.message="你好！"+data.data.username+"    ";
+            }
+
+        }
+    });
+    console.log(key);
+    function clearcook() {
+        localStorage.removeItem("key");
+        // windows.open("/login")
+        top.location="/login";
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="icon" href="picture.ico" type="image/x-icon"/>
+    <title>login</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="cache-control" content="no-cache"/>
+    <meta http-equiv="expires" content="0"/>
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3"/>
+    <meta http-equiv="description" content="ajax方式"/>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript"></script>
+    <link rel="stylesheet" href="spectre.min.css"></link>
+    <link rel="stylesheet" href="spectre-exp.min.css"></link>
+    <link rel="stylesheet" href="spectre-icons.min.css"></link>
+</head>
+<body>
+<div id="container" style="width:100%;height: 100%;">
+    <div id="header" style="background-color:#FFA500;width:100%;height: 165px;text-align:center;">
+
+        <h1>
+            <div id="welcome">
+                {{ message }}
+            </div>
+        </h1>
+    </div>
+    <div id="menu" style="background-color:#FFD700;width:100%;float:left;height: 600px;">
+        <div id="form-div">
+            <form id="form1" accept-charset="utf-8"
+                  style="position: absolute;left: 50%;top: 50%;transform: translate(-50%,-50%);">
+                <div style="margin: 15px; ">
+                    <!--<label class="label-tips" for="u">账号:</label>-->
+                    <!--<input type="text" id="u" name="id" class="inputstyle"/>-->
+                    <label class="form-label" for="u">帐号</label>
+                    <input class="form-input" type="text" id="u" placeholder="帐号"/>
+                </div>
+
+                <div style="margin: 15px">
+                    <!--<label class="lable-tips" for="password">密码:</label>-->
+                    <!--<input type="password" id="password" name="password" class="inputstyle"/>-->
+                    <label class="form-label" for="password">密码</label>
+                    <input class="form-input" type="password" id="password" placeholder="密码"/>
+                </div>
+
+                <input type="submit" class="btn btn-success" id="tj" name="登录" style="margin: 10px; "/>
+                <button type="reset" class="btn btn-error" value="Reset" style="margin: 10px; ">重置</button>
+
+            </form>
+        </div>
+    </div>
+    <div id="footer" style="clear:both;text-align:center;height: 180px;position:absolute;left:0;right:0;bottom:0;">
+        <label>
+            <textarea class="form-input" name="textarea" id="textarea" cols="120" rows="9">如果您是第一次登录
+1、用户名为本人工号或学号。工号一律为4位，与工资单上的工号相同。
+2、初始密码如下：
+    (1)、取15位身份证号码的后六位(如身份证号为3101018705212302，那密码为212302)。如果本人使用
+18位身份证号码，则取倒数第七位至倒数第二位(如身份证号为310101198705212302，那密码为521230)。
+    (2)、如果正确输入了上述密码后，用户仍然不能登录系统，教工改用本人的工号做为密码，学生则
+可改用学号（注意区分字母大小写）做为密码。
+</textarea>
+        </label>
+    </div>
+</div>
+</body>
+</html>
+<script>
+    var welcome = new Vue({
+        el: '#welcome',
+        data: {
+            message: '欢迎来到上海应用技术大学!'
+        }
+    })
+    $(document).ready(function () {
+        // SUBMIT FORM
+        $("#form1").submit(function (event) {
+            // Prevent the form from submitting via the browser.
+            event.preventDefault();
+            var formData = {
+                id: $("#u").val(),
+                password: $("#password").val()
+            };
+            localStorage.setItem("key", $("#u").val());
+            localStorage.setItem("flag", "false");
+            if (!isNaN(formData.id)) {
+                $.ajax({
+                    url: "/save",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(formData),
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log(data);
+                        if (data.status == "Done") {
+                            alert("帐号密码错误！");
+                            document.getElementById("password").value = "";
+                        } else if (data.status == "Exist") {
+                            localStorage.setItem("username", data.data.username);
+                            alert("登录成功！");
+                            window.location.href = "/teacher";
+                        } else {
+                            localStorage.setItem("username", data.data.username);
+                            alert("登录成功！");
+                            window.location.href = "/student";
+                        }
+                    }
+                });
+            } else {
+                alert("帐号格式不对！");
+                document.getElementById("password").value = "";
+            }
+        });
+    });
+</script>
